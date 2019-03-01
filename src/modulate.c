@@ -9,6 +9,8 @@
 #define FRAMES_PER_BUFFER 64
 
 #define DEFAULT_FREQ 30.0f
+#define LEFT_PHASE_ADD 1
+#define RIGHT_PHASE_ADD 1
 
 struct paData
 {
@@ -50,11 +52,15 @@ static int pa_callback( const void *inputBuffer, void *outputBuffer,
     {
         *out++ = *in++ * data->sin[data->left_phase];
         *out++ = *in++ * data->sin[data->right_phase];
-        data->left_phase += 1;
-        data->right_phase += 1;
-        if (data->left_phase >= data->sin_len || data->left_phase >= data->sin_len)
+        data->left_phase += LEFT_PHASE_ADD;
+        if (data->left_phase >= data->sin_len)
         {
-            data->left_phase = data->right_phase = 0;
+            data->left_phase = 0;
+        }
+        data->right_phase += RIGHT_PHASE_ADD;
+        if (data->right_phase >= data->sin_len)
+        {
+            data->right_phase = 0;
         }
     }
 
