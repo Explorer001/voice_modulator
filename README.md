@@ -22,3 +22,11 @@ cd build
 cmake ..
 make
 ```
+
+# Usage
+
+```bash
+ ./modulate <freq>
+```
+
+If no frequence is given the program will use 30hz.

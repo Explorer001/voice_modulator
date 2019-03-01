@@ -3,9 +3,12 @@
 #include <portaudio.h>
 #include <stdbool.h>
 #include <signal.h>
+#include <stdlib.h>
 
 #define SAMPLE_RATE 44100
 #define FRAMES_PER_BUFFER 64
+
+#define DEFAULT_FREQ 30.0f
 
 struct paData
 {
@@ -16,7 +19,7 @@ struct paData
 };
 
 //sin freq in hz
-static float sin_freq = 30.0f;
+static float sin_freq = DEFAULT_FREQ;
 
 //defines change in signal
 static float add = 0.0f;
@@ -64,7 +67,7 @@ size_t get_sin_size()
     return (size_t) SAMPLE_RATE / sin_freq;
 }
 
-int main(void)
+int main(int argc, char **args)
 {
     PaStreamParameters outputParameters;
     PaStreamParameters inputParameters;
@@ -72,6 +75,29 @@ int main(void)
     PaError err;
     struct paData data;
     PaDeviceIndex device_count;
+
+    //check if user entered frequency
+    //if valid -> use it
+    if (argc > 2)
+    {
+        printf("Error: too many parameters!\n");
+        printf("Usage: ./modulate <freq>\n");
+    }
+    else if (argc == 2)
+    {
+        float freq = (float) atof(args[1]);
+        if (freq == 0.0)
+        {
+            printf("No valid frequency: %s!\n", args[1]);
+            printf("Using default frequency.\n");
+        }
+        else
+        {
+            sin_freq = freq;
+        }
+    }
+
+    printf("Using modulation frequency: %.2f\n", sin_freq);
 
     //initializing paData struct
     data.left_phase = data.right_phase = 0;
